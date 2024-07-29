@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
+
+    <div class="grid-container">
+        <a href="/upload" class="grid-item">
+            <img class="icon" src="../static/styles/img/upload.png" alt="upload-icon">
+            <h2>Convert a file</h2>
+            <h5>With this tool you can upload a video / image and convert it to our animation style!</h5>
+        </a>
+        <a href="/webcam" class="grid-item">
+            <img class="icon" src="../static/styles/img/record.png" alt="record-icon">
+            <h2>Record a video</h2>
+            <h5>You can record a video before sending it to get animated!</h5>
+        </a>
+        <a href="/live_animation" class="grid-item">
+            <img class="icon" src="../static/styles/img/webcam.png" alt="webcam-icon">
+            <h2>Live Animation</h2>
+            <h5>Live webcam and live animation! Still a WIP :)</h5>
+        </a>
+    </div>
+
+    <div class="banner">
+        <div class="left-text">
+            <h1 id="banner-title">Want to learn more about this project?</h1>
+            <br>
+            <h1 id="banner-content">Find the code here: <a id="banner-link" href="https://github.com/Miha2002"> EzAnimation </a></h1>
+
+        </div>
+
+        <img class="right-gif" src="../static/styles/img/stickman.gif" alt="stickman-gif" />
+    </div>
+
+
+    <div class="colab">
+        <h1 id="partner-text">EzAnimation is a newly developed application that continues to change with the help our developers.
+            On our journey we have had the support of our dear partners:</h1>
+        <br>
+        <div class="partners">
+            <a href="https://unibuc.ro/?lang=en">
+                <img class="partner" src="../static/styles/img/unibuc.png" alt="partner-icon">
+            </a>
+            <a href="https://www.jetbrains.com/pycharm/">
+                <img class="partner" src="../static/styles/img/pycharm.png" alt="partner-icon">
+            </a>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/guide">
+                <img class="partner" src="../static/styles/img/mediapipe.png" alt="partner-icon">
+            </a>
+        </div>
+    </div>
+{% endblock %}

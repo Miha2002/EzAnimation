@@ -1,0 +1,12 @@
+.op {
+    font-size: 20px;
+    margin-top: 20px;
+    font-weight: bold;
+    padding: 5px;
+    background-color: #8790c7;
+    border: solid #8790c7;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: sans-serif;
+    box-shadow: 0 5px 10px 0 rgba(113,26,119,.5);
+}

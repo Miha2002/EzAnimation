@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/webcam.css') }}">
+
+    <h1>Live Animation</h1>
+    <div id="live_feed_container">
+        <img id="live_feed" alt="empty-feed" width="640" height="480">
+    </div>
+    <br>
+
+    <div class="under-btn">
+        <button id="start_recording_live">Start Animation</button>
+        <button id="stop_recording_live" disabled>Stop Animation</button>
+        <a href="/download" id="download_link">
+            <button id="download_live_animation" disabled>Download video</button>
+        </a>
+    </div>
+
+    <div class="under-btn2">
+        <input class="ok" id="background-upload" type="file"  name="background" style="display:none;">
+        <button class="custom-file-upload" id="upload-btn">Upload Background File</button>
+        <br><span id="file-name"></span>
+    </div>
+    <div class="grid-container">
+        <div id="option1" class="grid-item">
+            <button class="option-button" value="model1">Model 1</button>
+            <button class="option-button" value="model2">Model 2</button>
+            <button class="option-button" value="model3">Model 3</button>
+        </div>
+        <div id="display-option1" class="grid-item">
+            <img id="selected-image" src="" alt="Selected Model">
+        </div>
+        <div id="display-option2" class="grid-item">
+            <img id="selected-image2" src="" alt="Selected Background">
+        </div>
+        <div id="option2" class="grid-item">
+            <button class="option-button2" value="bg1">Background 1</button>
+            <button class="option-button2" value="bg2">Background 2</button>
+            <button class="option-button2" value="bg3">Background 3</button>
+        </div>
+    </div>
+    <br><br>
+
+    <script>
+        var startRecordingBtn = document.getElementById('start_recording_live');
+        var stopRecordingBtn = document.getElementById('stop_recording_live');
+        var liveFeedImg = document.getElementById('live_feed');
+        var downloadBtn = document.getElementById('download_live_animation')
+        var selectedImage = document.getElementById('selected-image');
+        var selectedImage2 = document.getElementById('selected-image2');
+
+        var optionButtons = document.querySelectorAll('.option-button');
+        var optionButtons2 = document.querySelectorAll('.option-button2');
+
+        var modelOption = "model1";
+        var backgroundOption = "bg1";
+
+        selectedImage.src = '../static/2dmodels/model1.jpg';
+        selectedImage2.src = '../static/backgrounds/bg1.jpg';
+
+        // TESTEAZA ASTA!!!
+        downloadBtn.addEventListener('click',function() {
+             window.location.reload();
+        });
+
+        startRecordingBtn.addEventListener('click', function() {
+            startRecordingBtn.disabled = true;
+            stopRecordingBtn.disabled = false;
+            liveFeedImg.src = "{{ url_for('live_feed') }}?model_option=" + modelOption + "&background_option=" + backgroundOption;
+            liveFeedImg.style.display = "block";
+            fetch('/start_recording_live', { method: 'POST' });
+        });
+
+        stopRecordingBtn.addEventListener('click', function() {
+            startRecordingBtn.disabled = false;
+            stopRecordingBtn.disabled = true;
+
+            liveFeedImg.src = "";
+            liveFeedImg.style.display = "none";
+            fetch('/stop_recording_live', { method: 'POST' }).then(function() {
+                downloadBtn.disabled = false;
+            });
+        });
+
+        optionButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var optionValue = this.value;
+                modelOption = optionValue;
+                selectedImage.src = '../static/2dmodels/' + optionValue + '.jpg';
+            });
+        });
+
+        optionButtons2.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var optionValue = this.value;
+                backgroundOption = optionValue;
+                selectedImage2.src = '../static/backgrounds/' + optionValue + '.jpg';
+            });
+        });
+
+        // Afisare text de upload fisier
+        var fileNameDisplay = document.getElementById('file-name');
+        var bgInput = document.getElementById('background-upload');
+
+        bgInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            var fileText = "";
+            if (bgInput.files.length > 0) {
+                fileText += "Background file: " + bgInput.files[0].name;
+            }
+            fileNameDisplay.textContent = fileText;
+        }
+
+        // Sa incarc fisierul de background inainte de celelalte fisiere
+        document.getElementById('upload-btn').addEventListener('click', function() {
+            document.getElementById('background-upload').click();
+        });
+
+        document.getElementById('background-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('upload_background', file);
+
+                fetch('/upload-background', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+
+    </script>
+{% endblock %}

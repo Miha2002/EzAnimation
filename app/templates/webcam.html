@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/webcam.css') }}">
+
+    <h1>Webcam Recorder</h1>
+    <div id="video_feed_container">
+        <img id="video_feed" alt="empty-feed" width="640" height="480">
+    </div>
+    <br>
+    <div class="under-btn">
+        <button id="start_recording">Start Recording</button>
+        <button id="stop_recording" disabled>Stop Recording</button>
+    </div>
+
+    <form id="process-form" method="POST" action="/process_recording" enctype="multipart/form-data">
+        <input type="hidden" name="model_option" id="model-option" value="">
+        <input type="hidden" name="background_option" id="background-option" value="">
+
+        <label for="background-upload" class="custom-file-upload">
+            Upload background
+        </label>
+        <input class="ok" id="background-upload" type="file" name="background">
+
+        <button id="process_recording" disabled>Process Recording</button>
+        <br><span id="file-name"></span>
+    </form>
+
+    <div class="grid-container">
+        <div id="option1" class="grid-item">
+            <button class="option-button" value="model1">Model 1</button>
+            <button class="option-button" value="model2">Model 2</button>
+            <button class="option-button" value="model3">Model 3</button>
+        </div>
+        <div id="display-option1" class="grid-item">
+            <img id="selected-image" src="" alt="Selected Image">
+        </div>
+        <div id="display-option2" class="grid-item">
+            <img id="selected-image2" src="" alt="Selected Image">
+        </div>
+        <div id="option2" class="grid-item">
+            <button class="option-button2" value="bg1">Background 1</button>
+            <button class="option-button2" value="bg2">Background 2</button>
+            <button class="option-button2" value="bg3">Background 3</button>
+        </div>
+    </div>
+    <br><br>
+
+    <script>
+        var startRecordingBtn = document.getElementById('start_recording');
+        var stopRecordingBtn = document.getElementById('stop_recording');
+        var liveFeedImg = document.getElementById('video_feed');
+        var processRecordingBtn = document.getElementById('process_recording');
+
+        var fileNameDisplay = document.getElementById('file-name');
+        var bgInput = document.getElementById('background-upload');
+
+        var modelOptionInput = document.getElementById('model-option');
+        var backgroundOptionInput = document.getElementById('background-option');
+        var selectedImage = document.getElementById('selected-image');
+        var selectedImage2 = document.getElementById('selected-image2');
+
+        var optionButtons = document.querySelectorAll('.option-button');
+        var optionButtons2 = document.querySelectorAll('.option-button2');
+
+        bgInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            var fileText = "";
+            if (bgInput.files.length > 0) {
+                fileText += "Background file: " + bgInput.files[0].name;
+            }
+            fileNameDisplay.textContent = fileText;
+        }
+
+        modelOptionInput.value = 'model1';
+        backgroundOptionInput.value = 'bg1';
+
+        selectedImage2.src = '../static/backgrounds/bg1.jpg';
+        selectedImage.src = '../static/2dmodels/model1.jpg';
+
+        startRecordingBtn.addEventListener('click', function() {
+            startRecordingBtn.disabled = true;
+            stopRecordingBtn.disabled = false;
+            liveFeedImg.src = "{{ url_for('video_feed') }}";
+            liveFeedImg.style.display = "block";
+            fetch('/start_recording',{ method: 'POST'});
+        });
+
+        stopRecordingBtn.addEventListener('click', function() {
+            startRecordingBtn.disabled = false;
+            stopRecordingBtn.disabled = true;
+            liveFeedImg.src = "";
+            liveFeedImg.style.display = "none";
+            fetch('/stop_recording', { method: 'POST' }).then(function() {
+                processRecordingBtn.disabled = false;
+            });
+        });
+
+        optionButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var optionValue = this.value;
+                modelOptionInput.value = optionValue;
+                selectedImage.src = '../static/2dmodels/' + optionValue + '.jpg';
+            });
+        });
+
+        optionButtons2.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var optionValue = this.value;
+                backgroundOptionInput.value = optionValue;
+                selectedImage2.src = '../static/backgrounds/' + optionValue + '.jpg';
+            });
+        });
+    </script>
+{% endblock %}

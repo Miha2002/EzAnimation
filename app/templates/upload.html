@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/upload.css') }}">
+
+<div class="item-container">
+    <h1>Upload image / video for the Animation process:</h1>
+    <h4> For this conversion, you need to select a file from your device and choose the customizations for the image/animation.</h4>
+    <h4> Get creative!</h4>
+    <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+        <label for="file-upload" class="custom-file-upload">
+            Upload file
+        </label>
+        <input class="ok" id="file-upload" type="file" name="file">
+        <label for="background-upload" class="custom-file-upload">
+            Upload background
+        </label>
+        <input class="ok" id="background-upload" type="file" name="background">
+
+        <input type="hidden" name="model_option" id="model-option" value="">
+        <input type="hidden" name="background_option" id="background-option" value="">
+
+        <button class="op" id="submit-button" disabled>Submit</button>
+        <br><span id="file-name"></span>
+        <div id="error-message" style="color: red; display: none;">No image/video uploaded</div>
+    </form>
+</div>
+<div class="grid-container">
+    <div id="option1" class="grid-item">
+        <button class="option-button" value="model1">Model 1</button>
+        <button class="option-button" value="model2">Model 2</button>
+        <button class="option-button" value="model3">Model 3</button>
+    </div>
+    <div id="display-option1" class="grid-item">
+        <img id="selected-image" src="" alt="Selected Image">
+    </div>
+    <div id="display-option2" class="grid-item">
+        <img id="selected-image2" src="" alt="Selected Image">
+    </div>
+    <div id="option2" class="grid-item">
+        <button class="option-button2" value="bg1">Background 1</button>
+        <button class="option-button2" value="bg2">Background 2</button>
+        <button class="option-button2" value="bg3">Background 3</button>
+    </div>
+</div>
+<br><br>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileNameDisplay = document.getElementById('file-name');
+        var fileInput = document.getElementById('file-upload');
+        var bgInput = document.getElementById('background-upload');
+        var submitButton = document.getElementById('submit-button');
+        var errorMessage = document.getElementById('error-message');
+
+        fileInput.addEventListener('change', updateFileName);
+        bgInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            var fileText = "";
+            if (fileInput.files.length > 0) {
+                fileText += "Uploaded file: " + fileInput.files[0].name;
+            }
+            if (bgInput.files.length > 0) {
+                if (fileText !== "") {
+                    fileText += ",  Background file: " + bgInput.files[0].name;
+                } else {
+                    fileText += "Background file: " + bgInput.files[0].name;
+                }
+            }
+            fileNameDisplay.textContent = fileText;
+
+            if (fileInput.files.length > 0) {
+                submitButton.disabled = false;
+                errorMessage.style.display = 'none';
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        document.getElementById('upload-form').addEventListener('submit', function (event) {
+            if (fileInput.files.length === 0) {
+                event.preventDefault();
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        var optionButtons = document.querySelectorAll('.option-button');
+        var selectedImage = document.getElementById('selected-image');
+        var optionButtons2 = document.querySelectorAll('.option-button2');
+        var selectedImage2 = document.getElementById('selected-image2');
+        var modelOptionInput = document.getElementById('model-option');
+        var backgroundOptionInput = document.getElementById('background-option');
+
+        backgroundOptionInput.value = 'bg1';
+        modelOptionInput.value = 'model1';
+
+        selectedImage2.src = '../static/backgrounds/bg1.jpg';
+        selectedImage.src = '../static/2dmodels/model1.jpg';
+
+        optionButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var optionValue = this.value;
+                modelOptionInput.value = this.value;
+
+                if (optionValue === 'model1') {
+                    selectedImage.src = '../static/2dmodels/model1.jpg';
+                } else if (optionValue === 'model2') {
+                    selectedImage.src = '../static/2dmodels/model2.jpg';
+                } else if (optionValue === 'model3') {
+                    selectedImage.src = '../static/2dmodels/model3.jpg';
+                }
+            });
+        });
+
+        optionButtons2.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var optionValue = this.value;
+                backgroundOptionInput.value = this.value;
+
+                if (optionValue === 'bg1') {
+                    selectedImage2.src = '../static/backgrounds/bg1.jpg';
+                } else if (optionValue === 'bg2') {
+                    selectedImage2.src = '../static/backgrounds/bg2.jpg';
+                } else if (optionValue === 'bg3') {
+                    selectedImage2.src = '../static/backgrounds/bg3.jpg';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>EzAnimation</title>
+    <link rel='shortcut icon' href='../static/styles/img/favicon.ico' type='image/x-icon'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/base.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <img class="logo" src="../static/styles/img/logo.png" alt="logo">
+        <button class="navbar-toggle" id="navbarToggle">&#9776;</button>
+        <ul class="right-navbar" id="rightNavbar">
+            <li><a href="/live_animation">Live Animation</a></li>
+            <li><a href="/webcam">Record Webcam</a></li>
+            <li><a href="/upload">Convert file</a></li>
+            <li><a href="/index">Home</a></li>
+        </ul>
+        <div class="dropdown-container" id="dropdownContainer">
+            <a class="dropdown-btn" href="/index">Home</a>
+            <a class="dropdown-btn" href="/upload">Convert file</a>
+            <a class="dropdown-btn" href="/webcam">Record Webcam</a>
+            <a class="dropdown-btn" href="/live_animation">Live Animation</a>
+        </div>
+    </div>
+    <br>
+    {% block content %}{% endblock %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const navbarToggle = document.getElementById("navbarToggle");
+            const dropdownContainer = document.getElementById("dropdownContainer");
+
+            navbarToggle.addEventListener("click", function() {
+                dropdownContainer.classList.toggle("show");
+            });
+        });
+    </script>
+</body>
+</html>

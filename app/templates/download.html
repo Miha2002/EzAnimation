@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/download.css') }}">
+
+    <div class="item-container">
+        <h1>Your file has been processed!</h1>
+        <form action="{{ url_for('download') }}" method="POST">
+            <input type="hidden" name="upload_id" value="{{ upload_id }}">
+            <button class="op" type="submit">Download Processed File</button>
+        </form>
+    </div>
+{% endblock %}
